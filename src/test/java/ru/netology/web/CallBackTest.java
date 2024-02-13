@@ -1,7 +1,7 @@
 package ru.netology.web;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,13 +20,12 @@ class CallbackTest {
     private WebDriver driver;
 
     @BeforeAll
-    public static void setUpAll() {
-
+    static void setUpAll() {
         WebDriverManager.chromedriver().setup();
     }
 
     @BeforeEach
-    public void beforeEach() {
+    void setUp() {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--no-sandbox");
@@ -36,27 +35,20 @@ class CallbackTest {
     }
 
     @AfterEach
-    public void afterEach() {
+    void tearDown() {
         driver.quit();
         driver = null;
     }
 
     @Test
     void shouldBeSuccessfulForm() {
-        driver.findElement(By.className("checkbox__box")).click();
-        driver.findElement(By.className("button")).click();
-        String text = driver.findElement(By.className("alert-success")).getText();
-        assertEquals("Ваша заявка успешно отправлена!", text.trim());
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Анна-Мария Анна");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+78001675812");
+        driver.findElement(By.cssSelector("[data-test-id='agreement']")).click();
+        driver.findElement(By.cssSelector("button.button")).click();
+        var actualTextElement =driver.findElement(By.cssSelector("[data-test-id=order-success]"));
+        var actualText = actualTextElement.getText().trim();
+        assertEquals("Ваша заявка успешно отправлена! Наш менеджер свяжется с вами в ближайшее время.", actualText);
+        assertTrue(actualTextElement.isDisplayed());
     }
-
-//    @Test
-//    void shouldTestV2() {
-//        WebElement form = driver.findElement(By.cssSelector("[data-test-id=callback-form]"));
-//        form.findElement(By.cssSelector("[data-test-id=name] input")).sendKeys("Василий");
-//        form.findElement(By.cssSelector("[data-test-id=phone] input")).sendKeys("+79270000000");
-//        form.findElement(By.cssSelector("[data-test-id=agreement]")).click();
-//        form.findElement(By.cssSelector("[data-test-id=submit]")).click();
-//        String text = driver.findElement(By.className("alert-success")).getText();
-//        assertEquals("Ваша заявка успешно отправлена!", text.trim());
-//    }
 }
